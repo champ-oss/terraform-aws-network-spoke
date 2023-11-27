@@ -36,7 +36,8 @@ module "ipam" {
 
   pool_configurations = {
     us-east-2 = {
-      description = "us-east-2"
+      description    = "us-east-2"
+      netmask_length = 9
     }
   }
 }
