@@ -31,6 +31,7 @@
 
 module "ipam" {
   source   = "github.com/aws-ia/terraform-aws-ipam?ref=v2.1.0"
+  count    = 1
   top_cidr = ["10.0.0.0/8"]
   top_name = "global"
 
@@ -47,8 +48,8 @@ resource "aws_ec2_transit_gateway" "this" {
   auto_accept_shared_attachments = "enable"
 }
 
-#module "this" {
-#  source             = "../../"
-#  ipv4_ipam_pool_id  = aws_vpc_ipam_pool.this[0].id
-#  transit_gateway_id = aws_ec2_transit_gateway.this[0].id
-#}
+module "this" {
+  source             = "../../"
+  ipv4_ipam_pool_id  = module.ipam[0].pools_level_1["us-east-2"].id
+  transit_gateway_id = aws_ec2_transit_gateway.this[0].id
+}
