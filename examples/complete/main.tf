@@ -5,7 +5,7 @@ module "ipam" {
   top_name = "global"
 
   pool_configurations = {
-    terraform-aws-network-spoke = {
+    us-east-2 = {
       locale         = "us-east-2"
       netmask_length = 9
     }
@@ -18,9 +18,9 @@ resource "aws_ec2_transit_gateway" "this" {
 }
 
 module "this" {
-  source     = "../../"
-  depends_on = [module.ipam]
-  #ipv4_ipam_pool_id  = module.ipam[0].pools_level_1["us-east-2"].id
-  ipam_search_description = "terraform-aws-network-spoke"
-  transit_gateway_id      = aws_ec2_transit_gateway.this[0].id
+  source                = "../../"
+  name                  = "network-spoke"
+  enable_discover_ipam  = false
+  vpc_ipv4_ipam_pool_id = module.ipam[0].pools_level_1["us-east-2"].id
+  transit_gateway_id    = aws_ec2_transit_gateway.this[0].id
 }
