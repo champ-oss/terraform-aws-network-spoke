@@ -35,6 +35,7 @@ module "hub" {
     transit_gateway = {
       netmask                 = 28
       connect_to_public_natgw = true
+      tags                    = {}
     }
   }
 
