@@ -18,7 +18,8 @@ resource "aws_ec2_transit_gateway" "this" {
 }
 
 module "this" {
-  source = "../../"
+  source     = "../../"
+  depends_on = [module.ipam]
   #ipv4_ipam_pool_id  = module.ipam[0].pools_level_1["us-east-2"].id
   ipam_search_description = "terraform-aws-network-spoke"
   transit_gateway_id      = aws_ec2_transit_gateway.this[0].id
