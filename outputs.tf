@@ -3,6 +3,16 @@ output "cidr_block" {
   value       = local.cidr_block
 }
 
+output "public_route_table_ids" {
+  description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table#id"
+  value       = local.public_route_table_ids
+}
+
+output "private_route_table_ids" {
+  description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table#id"
+  value       = local.private_route_table_ids
+}
+
 output "public_subnets_ids" {
   description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet#id"
   value       = local.public_subnets_ids
