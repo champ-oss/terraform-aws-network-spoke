@@ -11,6 +11,7 @@ locals {
   private_subnets_ids     = [for _, value in module.vpc[0].private_subnet_attributes_by_az : value.id]
   private_route_table_ids = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.private : value.id]
   public_route_table_ids  = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.public : value.id]
+  public_ips              = [for _, value in module.vpc[0].nat_gateway_attributes_by_az : value.public_ip]
 }
 
 module "vpc" {

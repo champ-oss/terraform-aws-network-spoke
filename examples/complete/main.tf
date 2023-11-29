@@ -59,22 +59,38 @@ module "this" {
   transit_gateway_id    = aws_ec2_transit_gateway.this[0].id
 }
 
-# Use the keep alive lambda to test internet connectivity through the hub
+data "archive_file" "this" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "package.zip"
+}
+
 module "internet_test" {
-  depends_on         = [module.hub]
-  source             = "github.com/champ-oss/terraform-aws-vpn-keep-alive.git?ref=v1.0.0-3bfa7ed"
-  enable             = true
-  git                = "network-spoke"
-  host               = "www.google.com"
-  interval_minutes   = 1
-  name               = "internet-test"
-  port               = 80
-  timeout            = 10
-  vpc_id             = module.this[0].vpc_id
-  private_subnet_ids = module.this[0].private_subnets_ids
+  source              = "github.com/champ-oss/terraform-aws-lambda.git?ref=v1.0.133-c385eba"
+  enable_cw_event     = true
+  enable_function_url = false
+  enable_vpc          = true
+  filename            = data.archive_file.this.output_path
+  git                 = "network-spoke"
+  handler             = "get_url.handler"
+  name                = "internet-test"
+  private_subnet_ids  = module.this.private_subnets_ids
+  runtime             = "python3.9"
+  schedule_expression = "cron(*/1 * * * ? *)"
+  source_code_hash    = data.archive_file.this.output_base64sha256
+  timeout             = 15
+  vpc_id              = module.this.vpc_id
+  environment         = { URL = "api.seeip.org" }
 }
 
 output "internet_test_log_group" {
   description = "log group name for internet test function"
   value       = module.internet_test.cloudwatch_log_group
 }
+
+output "public_ips" {
+  description = "List of public NAT IP addresses"
+  value       = [for _, value in module.hub[0].nat_gateway_attributes_by_az : value.public_ip]
+}
+
+
