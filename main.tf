@@ -54,6 +54,18 @@ resource "aws_default_network_acl" "this" {
   count                  = 1
   default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
 
+  dynamic "ingress" {
+    for_each = toset(var.ingress_acl_allow_rules)
+    content {
+      protocol   = -1
+      rule_no    = ingress.value.rule_no
+      action     = "allow"
+      cidr_block = ingress.value.cidr_block
+      from_port  = 0
+      to_port    = 0
+    }
+  }
+
   # Always allow all traffic from local CIDR block
   ingress {
     protocol   = -1

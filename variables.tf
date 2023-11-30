@@ -16,6 +16,15 @@ variable "enable_s3_vpc_endpoint" {
   default     = true
 }
 
+variable "ingress_acl_allow_rules" {
+  description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl"
+  type = list(object({
+    cidr_block = string
+    rule_no    = number
+  }))
+  default = []
+}
+
 variable "ipam_search_description" {
   description = "IPAM pool description to search"
   type        = string
