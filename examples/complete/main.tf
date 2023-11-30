@@ -1,23 +1,7 @@
-data "aws_vpcs" "this" {
-  tags = {
-    purpose = "vega"
-  }
-}
-
-data "aws_subnets" "this" {
-  tags = {
-    purpose = "vega"
-    Type    = "Private"
-  }
-
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpcs.this.ids[0]]
-  }
-}
-
 module "this" {
-  source             = "../../"
-  private_subnet_ids = data.aws_subnets.this.ids
-  vpc_id             = data.aws_vpcs.this.ids[0]
+  source                = "../../"
+  name                  = "network-spoke"
+  enable_discover_ipam  = false
+  vpc_ipv4_ipam_pool_id = module.ipam[0].pools_level_1["us-east-2"].id
+  transit_gateway_id    = aws_ec2_transit_gateway.this[0].id
 }
