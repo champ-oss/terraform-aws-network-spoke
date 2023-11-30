@@ -93,6 +93,10 @@ resource "aws_default_network_acl" "this" {
     from_port  = 0
     to_port    = 0
   }
+
+  lifecycle {
+    ignore_changes = [subnet_ids]
+  }
 }
 
 resource "aws_vpc_endpoint" "s3" {
