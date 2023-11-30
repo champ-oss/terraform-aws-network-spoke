@@ -50,6 +50,29 @@ module "vpc" {
   }
 }
 
+resource "aws_default_network_acl" "this" {
+  count                  = 1
+  default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
+
+  ingress {
+    protocol   = -1
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  egress {
+    protocol   = -1
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+}
+
 resource "aws_vpc_endpoint" "s3" {
   count             = var.enable_s3_vpc_endpoint ? 1 : 0
   vpc_endpoint_type = "Gateway"
