@@ -54,40 +54,59 @@ resource "aws_default_network_acl" "this" {
   count                  = 1
   default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
 
+  # Allow ingress traffic from local VPC CIDR block
   dynamic "ingress" {
-    for_each = toset(var.ingress_acl_allow_rules)
+    for_each = var.enable_ingress_local_allow ? [1] : []
     content {
       protocol   = -1
-      rule_no    = ingress.value.rule_no
+      rule_no    = 1
       action     = "allow"
+      cidr_block = local.cidr_block
+      from_port  = 0
+      to_port    = 0
+    }
+  }
+
+  dynamic "ingress" {
+    for_each = var.ingress_acl_rules
+    content {
+      protocol   = -1
+      rule_no    = ingress.key + 2
+      action     = ingress.value.action
       cidr_block = ingress.value.cidr_block
       from_port  = 0
       to_port    = 0
     }
   }
 
-  # Always allow all traffic from local CIDR block
-  ingress {
-    protocol   = -1
-    rule_no    = 10
-    action     = "allow"
-    cidr_block = local.cidr_block
-    from_port  = 0
-    to_port    = 0
+  # Deny ingress traffic from one specific CIDR block (by default: 10.0.0.0/8)
+  dynamic "ingress" {
+    for_each = var.enable_ingress_cidr_deny ? [1] : []
+    content {
+      protocol   = -1
+      rule_no    = length(var.ingress_acl_rules) + 2
+      action     = "deny"
+      cidr_block = var.ingress_cidr_deny
+      from_port  = 0
+      to_port    = 0
+    }
   }
 
-  ingress {
-    protocol   = -1
-    rule_no    = 1000
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+  dynamic "ingress" {
+    for_each = var.enable_ingress_implicit_allow ? [1] : []
+    content {
+      protocol   = -1
+      rule_no    = length(var.ingress_acl_rules) + 3
+      action     = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port  = 0
+      to_port    = 0
+    }
   }
 
   egress {
     protocol   = -1
-    rule_no    = 1000
+    rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
     from_port  = 0
