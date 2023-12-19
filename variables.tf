@@ -16,6 +16,39 @@ variable "enable_s3_vpc_endpoint" {
   default     = true
 }
 
+variable "enable_ingress_implicit_allow" {
+  description = "Enable a rule to allow all ingress traffic from 0.0.0.0/0"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ingress_local_allow" {
+  description = "Enable a rule to allow all ingress traffic from the local VPC CIDR block"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ingress_cidr_deny" {
+  description = "Enable a rule to deny all ingress traffic from a specific CIDR block (var.ingress_cidr_deny)"
+  type        = bool
+  default     = true
+}
+
+variable "ingress_acl_rules" {
+  description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl"
+  type = list(object({
+    cidr_block = string
+    action     = optional(string, "allow")
+  }))
+  default = []
+}
+
+variable "ingress_cidr_deny" {
+  description = "Ingress CIDR block to deny traffic"
+  type        = string
+  default     = "10.0.0.0/8"
+}
+
 variable "ipam_search_description" {
   description = "IPAM pool description to search"
   type        = string
