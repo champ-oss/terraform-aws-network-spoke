@@ -9,6 +9,7 @@ module "this" {
     { cidr_block = "10.1.0.0/16" },
     { cidr_block = module.hub[0].vpc_attributes.cidr_block }
   ]
+  # tflint-ignore: multiline_comment
   # Resulting VPC Network ACL:
   # rule_no|cidr_block|action|description
   # 1 <local cidr> Allow (var.enable_ingress_local_allow = true)
