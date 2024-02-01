@@ -27,7 +27,7 @@ resource "aws_ec2_transit_gateway_route" "default" {
 # Hub VPC for centralizes services and routing all internet traffic through centralized NAT gateways
 module "hub" {
   count                   = 1
-  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.1"
+  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = "hub"
   az_count                = 2
   vpc_ipv4_ipam_pool_id   = module.ipam[0].pools_level_1["us-east-2"].id
