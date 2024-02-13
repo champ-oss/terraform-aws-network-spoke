@@ -16,7 +16,7 @@ locals {
 
 module "vpc" {
   count                   = 1
-  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.1"
+  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = var.name
   az_count                = var.availability_zones_count
   vpc_ipv4_ipam_pool_id   = var.vpc_ipv4_ipam_pool_id != null ? var.vpc_ipv4_ipam_pool_id : data.aws_vpc_ipam_pool.this[0].id
