@@ -6,7 +6,7 @@ data "archive_file" "this" {
 
 # Lambda to test internet by sending a request from spoke to api.seeip.org which responds with our public IP
 module "internet_test" {
-  source              = "github.com/champ-oss/terraform-aws-lambda.git?ref=v1.0.136-380511e"
+  source              = "github.com/champ-oss/terraform-aws-lambda.git?ref=v1.0.141-e8ebe65"
   enable_cw_event     = true
   enable_function_url = false
   enable_vpc          = true
@@ -28,7 +28,7 @@ module "internet_test" {
 
 # Lambda which tests connecting from the spoke to a mysql host in the hub
 module "mysql_test" {
-  source              = "github.com/champ-oss/terraform-aws-lambda.git?ref=v1.0.136-380511e"
+  source              = "github.com/champ-oss/terraform-aws-lambda.git?ref=v1.0.141-e8ebe65"
   enable_cw_event     = true
   enable_function_url = false
   enable_vpc          = true
