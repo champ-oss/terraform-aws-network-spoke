@@ -1,6 +1,6 @@
 # Create test database in the hub VPC to test transit gateway connectivity
 module "mysql" {
-  source                   = "github.com/champ-oss/terraform-aws-mysql.git?ref=v1.0.169-b62841b"
+  source                   = "github.com/champ-oss/terraform-aws-mysql.git?ref=v1.0.170-72f9097"
   name_prefix              = "network-spoke"
   source_security_group_id = aws_security_group.test.id
   vpc_id                   = module.hub[0].vpc_attributes.id
