@@ -90,3 +90,9 @@ variable "vpc_ipv4_netmask_length" {
   type        = string
   default     = 18
 }
+
+variable "enabled" {
+  description = "Set to false to prevent the module from creating any resources"
+  type        = bool
+  default     = true
+}

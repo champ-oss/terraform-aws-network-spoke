@@ -15,7 +15,7 @@ locals {
 }
 
 module "vpc" {
-  count                   = 1
+  count = var.enabled ? 1 : 0
   source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = var.name
   az_count                = var.availability_zones_count
@@ -51,7 +51,7 @@ module "vpc" {
 }
 
 resource "aws_default_network_acl" "this" {
-  count                  = 1
+  count                  = var.enabled
   default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
 
   # Allow ingress traffic from local VPC CIDR block
@@ -119,10 +119,10 @@ resource "aws_default_network_acl" "this" {
 }
 
 resource "aws_vpc_endpoint" "s3" {
-  count             = var.enable_s3_vpc_endpoint ? 1 : 0
+  count             = var.enabled && var.enable_s3_vpc_endpoint ? 1 : 0
   vpc_endpoint_type = "Gateway"
   vpc_id            = local.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.this.name}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.this[0].name}.s3"
   route_table_ids   = local.private_route_table_ids
   tags              = merge({ Name : "${var.name}-s3" }, local.tags, var.tags)
 }
