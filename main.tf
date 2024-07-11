@@ -15,7 +15,7 @@ locals {
 }
 
 module "vpc" {
-  count = var.enabled ? 1 : 0
+  count                   = var.enabled ? 1 : 0
   source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = var.name
   az_count                = var.availability_zones_count
@@ -51,7 +51,7 @@ module "vpc" {
 }
 
 resource "aws_default_network_acl" "this" {
-  count                  = var.enabled
+  count                  = var.enabled ? 1 : 0
   default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
 
   # Allow ingress traffic from local VPC CIDR block
