@@ -5,7 +5,7 @@ variable "availability_zones_count" {
 }
 
 variable "enable_discover_ipam" {
-  description = "Use data resource to discover IPAM pool"
+  description = "Use data resource to discover ipam pool"
   type        = bool
   default     = true
 }
