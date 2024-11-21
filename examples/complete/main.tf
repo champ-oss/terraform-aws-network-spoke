@@ -3,12 +3,12 @@ module "this" {
   enabled               = var.enabled
   name                  = "network-spoke"
   enable_discover_ipam  = false
-  vpc_ipv4_ipam_pool_id = module.ipam[0].pools_level_1["us-east-2"].id
+  vpc_ipv4_ipam_pool_id = try(module.ipam[0].pools_level_1["us-east-2"].id, null)
   transit_gateway_id    = aws_ec2_transit_gateway.this[0].id
 
   ingress_acl_rules = [
     { cidr_block = "10.1.0.0/16" },
-    { cidr_block = module.hub[0].vpc_attributes.cidr_block }
+    { cidr_block = try(module.hub[0].vpc_attributes.cidr_block, null) }
   ]
 }
 
