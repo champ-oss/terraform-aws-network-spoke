@@ -46,7 +46,7 @@ module "mysql_test" {
   timeout             = 15
   vpc_id              = module.this.vpc_id
   environment = {
-    HOST = module.mysql[0].address
+    HOST = try(module.mysql[0].address, "")
     PORT = 3306
   }
 }
