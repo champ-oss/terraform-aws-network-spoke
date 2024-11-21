@@ -94,5 +94,5 @@ variable "vpc_ipv4_netmask_length" {
 variable "enabled" {
   description = "Set to false to prevent the module from creating any resources"
   type        = bool
-  default     = false
+  default     = true
 }

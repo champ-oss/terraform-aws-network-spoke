@@ -5,13 +5,13 @@ locals {
     creator   = "terraform"
     component = "spoke"
   }
-  vpc_id                  = module.vpc[0].vpc_attributes.id
-  cidr_block              = module.vpc[0].vpc_attributes.cidr_block
-  public_subnets_ids      = [for _, value in module.vpc[0].public_subnet_attributes_by_az : value.id]
-  private_subnets_ids     = [for _, value in module.vpc[0].private_subnet_attributes_by_az : value.id]
-  private_route_table_ids = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.private : value.id]
-  public_route_table_ids  = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.public : value.id]
-  public_ips              = [for _, value in module.vpc[0].nat_gateway_attributes_by_az : value.public_ip]
+  vpc_id                  = try(module.vpc[0].vpc_attributes.id, "")
+  cidr_block              = try(module.vpc[0].vpc_attributes.cidr_block, "")
+  public_subnets_ids      = try([for _, value in module.vpc[0].public_subnet_attributes_by_az : value.id], [])
+  private_subnets_ids     = try([for _, value in module.vpc[0].private_subnet_attributes_by_az : value.id], [])
+  private_route_table_ids = try([for _, value in module.vpc[0].rt_attributes_by_type_by_az.private : value.id], [])
+  public_route_table_ids  = try([for _, value in module.vpc[0].rt_attributes_by_type_by_az.public : value.id], [])
+  public_ips              = try([for _, value in module.vpc[0].nat_gateway_attributes_by_az : value.public_ip], [])
 }
 
 module "vpc" {
