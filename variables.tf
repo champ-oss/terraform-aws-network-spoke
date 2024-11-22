@@ -5,7 +5,7 @@ variable "availability_zones_count" {
 }
 
 variable "enable_discover_ipam" {
-  description = "Use data resource to discover IPAM pool"
+  description = "Use data resource to discover ipam pool"
   type        = bool
   default     = true
 }
@@ -89,4 +89,10 @@ variable "vpc_ipv4_netmask_length" {
   description = "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc#ipv4_netmask_length"
   type        = string
   default     = 18
+}
+
+variable "enabled" {
+  description = "Set to false to prevent the module from creating any resources"
+  type        = bool
+  default     = true
 }

@@ -1,6 +1,6 @@
 module "ipam" {
   source   = "github.com/aws-ia/terraform-aws-ipam?ref=v2.1.0"
-  count    = 1
+  count    = var.enabled ? 1 : 0
   top_cidr = ["10.0.0.0/8"]
   top_name = "global"
 
@@ -13,12 +13,13 @@ module "ipam" {
 }
 
 resource "aws_ec2_transit_gateway" "this" {
-  count                          = 1
+  count                          = var.enabled ? 1 : 0
   auto_accept_shared_attachments = "enable"
 }
 
 # Send internet traffic from all VPCs to the hub
 resource "aws_ec2_transit_gateway_route" "default" {
+  count                          = var.enabled ? 1 : 0
   destination_cidr_block         = "0.0.0.0/0"
   transit_gateway_route_table_id = aws_ec2_transit_gateway.this[0].association_default_route_table_id
   transit_gateway_attachment_id  = module.hub[0].transit_gateway_attachment_id
@@ -26,7 +27,7 @@ resource "aws_ec2_transit_gateway_route" "default" {
 
 # Hub VPC for centralizes services and routing all internet traffic through centralized NAT gateways
 module "hub" {
-  count                   = 1
+  count                   = var.enabled ? 1 : 0
   source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = "hub"
   az_count                = 2

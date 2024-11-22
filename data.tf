@@ -1,7 +1,9 @@
-data "aws_region" "this" {}
+data "aws_region" "this" {
+  count = var.enabled ? 1 : 0
+}
 
 data "aws_vpc_ipam_pool" "this" {
-  count = var.enable_discover_ipam ? 1 : 0
+  count = var.enable_discover_ipam && var.enabled ? 1 : 0
   filter {
     name   = "description"
     values = [var.ipam_search_description]
@@ -9,7 +11,7 @@ data "aws_vpc_ipam_pool" "this" {
 
   filter {
     name   = "locale"
-    values = [data.aws_region.this.name]
+    values = [data.aws_region.this[0].name]
   }
 
   filter {

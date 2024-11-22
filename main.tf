@@ -5,17 +5,17 @@ locals {
     creator   = "terraform"
     component = "spoke"
   }
-  vpc_id                  = module.vpc[0].vpc_attributes.id
-  cidr_block              = module.vpc[0].vpc_attributes.cidr_block
-  public_subnets_ids      = [for _, value in module.vpc[0].public_subnet_attributes_by_az : value.id]
-  private_subnets_ids     = [for _, value in module.vpc[0].private_subnet_attributes_by_az : value.id]
-  private_route_table_ids = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.private : value.id]
-  public_route_table_ids  = [for _, value in module.vpc[0].rt_attributes_by_type_by_az.public : value.id]
-  public_ips              = [for _, value in module.vpc[0].nat_gateway_attributes_by_az : value.public_ip]
+  vpc_id                  = try(module.vpc[0].vpc_attributes.id, "")
+  cidr_block              = try(module.vpc[0].vpc_attributes.cidr_block, "")
+  public_subnets_ids      = try([for _, value in module.vpc[0].public_subnet_attributes_by_az : value.id], [])
+  private_subnets_ids     = try([for _, value in module.vpc[0].private_subnet_attributes_by_az : value.id], [])
+  private_route_table_ids = try([for _, value in module.vpc[0].rt_attributes_by_type_by_az.private : value.id], [])
+  public_route_table_ids  = try([for _, value in module.vpc[0].rt_attributes_by_type_by_az.public : value.id], [])
+  public_ips              = try([for _, value in module.vpc[0].nat_gateway_attributes_by_az : value.public_ip], [])
 }
 
 module "vpc" {
-  count                   = 1
+  count                   = var.enabled ? 1 : 0
   source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
   name                    = var.name
   az_count                = var.availability_zones_count
@@ -51,7 +51,7 @@ module "vpc" {
 }
 
 resource "aws_default_network_acl" "this" {
-  count                  = 1
+  count                  = var.enabled ? 1 : 0
   default_network_acl_id = module.vpc[0].vpc_attributes.default_network_acl_id
 
   # Allow ingress traffic from local VPC CIDR block
@@ -119,10 +119,10 @@ resource "aws_default_network_acl" "this" {
 }
 
 resource "aws_vpc_endpoint" "s3" {
-  count             = var.enable_s3_vpc_endpoint ? 1 : 0
+  count             = var.enabled && var.enable_s3_vpc_endpoint ? 1 : 0
   vpc_endpoint_type = "Gateway"
   vpc_id            = local.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.this.name}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.this[0].name}.s3"
   route_table_ids   = local.private_route_table_ids
   tags              = merge({ Name : "${var.name}-s3" }, local.tags, var.tags)
 }
