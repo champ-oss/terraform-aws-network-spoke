@@ -1,5 +1,5 @@
 module "ipam" {
-  source   = "github.com/aws-ia/terraform-aws-ipam?ref=v2.1.0"
+  source   = "github.com/aws-ia/terraform-aws-ipam?ref=v2.1.1"
   count    = var.enabled ? 1 : 0
   top_cidr = ["10.0.0.0/8"]
   top_name = "global"
@@ -28,7 +28,7 @@ resource "aws_ec2_transit_gateway_route" "default" {
 # Hub VPC for centralizes services and routing all internet traffic through centralized NAT gateways
 module "hub" {
   count                   = var.enabled ? 1 : 0
-  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.2"
+  source                  = "github.com/aws-ia/terraform-aws-vpc?ref=v4.4.4"
   name                    = "hub"
   az_count                = 2
   vpc_ipv4_ipam_pool_id   = module.ipam[0].pools_level_1["us-east-2"].id
